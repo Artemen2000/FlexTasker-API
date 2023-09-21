@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FlexTasker.Models;
 using FlexTasker.Database;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlexTasker.Controllers
 {
@@ -17,9 +18,11 @@ namespace FlexTasker.Controllers
 		}
 
 		// GET: api/TodoItems
+		[Authorize]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
 		{
+
 			return await _context.todoItems.ToListAsync();
 		}
 

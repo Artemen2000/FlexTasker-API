@@ -6,27 +6,23 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using FlexTasker.Models;
 using FlexTasker.Database;
+using Microsoft.Identity.Client;
 
 namespace FlexTasker.Controllers
 {
-	public class Account_Controller : Controller
+	public class JsonCreator : Controller { }
+
+	[Route("api/[controller]")]
+	[ApiController]
+	public class AccountController : ControllerBase
 	{
 		private readonly ApplicationContext _context;
-		public Account_Controller()
+		public AccountController()
 		{
 			_context = new ApplicationContext();
 		}
 
-		// Is wiped every time
-		//private List<Models.User> users = new List<Models.User>
-		//{
-		//	new Models.User { Name="admin@gmail.com", Password="12345" },
-		//	new Models.User { Name="qwerty@gmail.com", Password="55555" }
-		//};
-
-
-
-		[HttpPost("/token")]
+		[HttpPost("/api/signin")]
 		public IActionResult Token(string username, string password)
 		{
 			var identity = GetIdentity(username, password);
@@ -52,7 +48,8 @@ namespace FlexTasker.Controllers
 				username = identity.Name
 			};
 
-			return Json(response);
+			JsonCreator jc = new JsonCreator();
+			return jc.Json(response);
 		}
 
 		private ClaimsIdentity GetIdentity(string username, string password)
@@ -70,16 +67,20 @@ namespace FlexTasker.Controllers
 			return null;
 		}
 
-		[HttpPost("/register")]
+		[HttpPost("/api/signup")]
 		public IActionResult Register(string username, string password, string confPassword)
 		{
-			if (password.Equals(confPassword))
-			{
-				_context.users.Add(new Models.User { Name = username, Password = password });
-				_context.SaveChanges();
-				return Token(username, password);
-			}
-			return BadRequest(new { errorText = "Passwords are not equal" });
+			if (username.IsNullOrEmpty() || password.IsNullOrEmpty() || confPassword.IsNullOrEmpty())
+				return BadRequest(new { errorText = "All field must be filled" });
+			if (!password.Equals(confPassword))
+				return BadRequest(new { errorText = "Passwords are not equal" });
+			User user = _context.users.FirstOrDefault(x => x.Name == username);
+			if (user != null)
+				return BadRequest(new { errorText = "This user is already registered" });
+			
+			_context.users.Add(new Models.User { Name = username, Password = password });
+			_context.SaveChanges();
+			return Token(username, password);
 		}
 	}
 }
