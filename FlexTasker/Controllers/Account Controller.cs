@@ -7,6 +7,7 @@ using System.Security.Claims;
 using FlexTasker.Models;
 using FlexTasker.Database;
 using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlexTasker.Controllers
 {
@@ -80,7 +81,17 @@ namespace FlexTasker.Controllers
 			
 			_context.users.Add(new Models.User { Name = username, Password = password });
 			_context.SaveChanges();
+			long userid = _context.users.SingleOrDefault(user => user.Name == username).Id;
+			_context.todoLists.Add(new TodoList { Name = "Default List", UserId = userid, ListType = Models.Type.DEFAULT });
+			_context.SaveChanges();
 			return Token(username, password);
+		}
+
+		[Authorize]
+		[HttpPost("/api/logout")]
+		public IActionResult Logout()
+		{
+			return Ok();
 		}
 	}
 }
