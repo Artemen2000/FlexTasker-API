@@ -1,33 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
+using FlexTasker.Models;
+using FlexTasker.Database;
+using Microsoft.AspNetCore.Authorization;
 
-namespace TodoApi.Controllers
+namespace FlexTasker.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class TodoItemsController : ControllerBase
 	{
-		private readonly TodoContext _context;
+		private readonly ApplicationContext _context;
 
-		public TodoItemsController(TodoContext context)
+		public TodoItemsController(ApplicationContext context)
 		{
-			_context = context;
+			_context = new ApplicationContext();
 		}
 
 		// GET: api/TodoItems
+		[Authorize]
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
 		{
-			return await _context.TodoItems.ToListAsync();
+
+			return await _context.todoItems.ToListAsync();
 		}
 
 		// GET: api/TodoItems/5
 		// <snippet_GetByID>
 		[HttpGet("{id}")]
-		public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
+		public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
 		{
-			var todoItem = await _context.TodoItems.FindAsync(id);
+			var todoItem = await _context.todoItems.FindAsync(id);
 
 			if (todoItem == null)
 			{
@@ -77,7 +81,7 @@ namespace TodoApi.Controllers
 		[HttpPost]
 		public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
 		{
-			_context.TodoItems.Add(todoItem);
+			_context.todoItems.Add(todoItem);
 			await _context.SaveChangesAsync();
 
 			//    return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
@@ -89,13 +93,13 @@ namespace TodoApi.Controllers
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteTodoItem(long id)
 		{
-			var todoItem = await _context.TodoItems.FindAsync(id);
+			var todoItem = await _context.todoItems.FindAsync(id);
 			if (todoItem == null)
 			{
 				return NotFound();
 			}
 
-			_context.TodoItems.Remove(todoItem);
+			_context.todoItems.Remove(todoItem);
 			await _context.SaveChangesAsync();
 
 			return NoContent();
@@ -103,7 +107,7 @@ namespace TodoApi.Controllers
 
 		private bool TodoItemExists(long id)
 		{
-			return _context.TodoItems.Any(e => e.Id == id);
+			return _context.todoItems.Any(e => e.Id == id);
 		}
 	}
 }
