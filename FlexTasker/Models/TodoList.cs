@@ -6,6 +6,6 @@
 		public int Id { get; set; }
 		public string Name { get; set; }
 		public long UserId { get; set; }
-		Type ListType { get; set;}
+		public Type ListType { get; set;}
 	}
 }

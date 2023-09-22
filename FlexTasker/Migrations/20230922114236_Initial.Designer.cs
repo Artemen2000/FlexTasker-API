@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlexTasker.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230921115419_Initial")]
+    [Migration("20230922114236_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -59,6 +59,9 @@ namespace FlexTasker.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ListType")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
