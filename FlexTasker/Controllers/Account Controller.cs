@@ -8,6 +8,7 @@ using FlexTasker.Models;
 using FlexTasker.Database;
 using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace FlexTasker.Controllers
 {
@@ -23,6 +24,7 @@ namespace FlexTasker.Controllers
 			_context = new ApplicationContext();
 		}
 
+		[SwaggerOperation(Summary = "Returns token which must be used for any further api usings")]
 		[HttpPost("/api/signin")]
 		public IActionResult Token(string username, string password)
 		{
@@ -68,6 +70,7 @@ namespace FlexTasker.Controllers
 			return null;
 		}
 
+		[SwaggerOperation(Summary = "Registers new user and returns a token")]
 		[HttpPost("/api/signup")]
 		public IActionResult Register(string username, string password, string confPassword)
 		{
