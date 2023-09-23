@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 
 namespace FlexTasker.Controllers
@@ -24,7 +25,7 @@ namespace FlexTasker.Controllers
 			_context = new ApplicationContext();
 		}
 
-
+		[SwaggerOperation(Summary = "Returns JSON with all tasklists")]
 		[Authorize]
 		[HttpGet("/api/getTaskLists")]
 		public async Task<ActionResult<IEnumerable<TodoList>>> GetTodoLists()
@@ -34,6 +35,7 @@ namespace FlexTasker.Controllers
 			return await _context.todoLists.FromSql($"SELECT * FROM \"todoLists\" WHERE \"UserId\" = {userid }").ToListAsync();
 		}
 
+		[SwaggerOperation(Summary = "Returns JSON with all tasks from the tasklist if OK. Returns empty JSON if not found")]
 		[Authorize]
 		[HttpGet("/api/getTaskList/{id}")]
 		public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoList(long id)
@@ -43,6 +45,7 @@ namespace FlexTasker.Controllers
 			return await _context.todoItems.FromSql($"SELECT * FROM \"todoItems\" WHERE \"listId\" = (SELECT \"Id\" FROM \"todoLists\" WHERE \"UserId\" = {userid} AND \"Id\" = {id}) ORDER BY \"Id\"").ToListAsync();
 		}
 
+		[SwaggerOperation(Summary = "Creates tasklist defined by the name parameter or body content (priority for parameter). Returns JSON with the tasklist")]
 		[Authorize]
 		[HttpPost("/api/createTaskList")]
 		public async Task<ActionResult<TodoList>> PostTodoList(string? name, TodoList? todoList)
@@ -55,6 +58,7 @@ namespace FlexTasker.Controllers
 			return CreatedAtAction(nameof(GetTodoList), new { id = todoList1.Id }, todoList1);
 		}
 
+		[SwaggerOperation(Summary = "Updates tasklist defined by id and body content. Returns 204 if OK. Can return 400 or 404")]
 		[Authorize]
 		[HttpPut("/api/updateTaskList/{id}")]
 		public async Task<IActionResult> PutTodoList(long id, string? name, TodoList? todoList)
@@ -99,6 +103,7 @@ namespace FlexTasker.Controllers
 			return NoContent();
 		}
 
+		[SwaggerOperation(Summary = "Deletes tasklist defined by the id. Returns 204 if OK. Can return 403 or 404")]
 		[Authorize]
 		[HttpDelete("/api/deleteTaskList/{id}")]
 		public async Task<IActionResult> DeleteTodoList(long id)

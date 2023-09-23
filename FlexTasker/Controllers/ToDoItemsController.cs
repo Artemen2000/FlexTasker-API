@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FlexTasker.Models;
 using FlexTasker.Database;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace FlexTasker.Controllers
 {
@@ -17,6 +18,7 @@ namespace FlexTasker.Controllers
 			_context = new ApplicationContext();
 		}
 
+		[SwaggerOperation(Summary = "Returns JSON with all tasks linked to the user of a token")]
 		[Authorize]
 		[HttpGet("/api/getTasks")]
 		public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
@@ -25,6 +27,7 @@ namespace FlexTasker.Controllers
 			return await _context.todoItems.FromSql($"SELECT * FROM \"todoItems\" WHERE \"listId\" in (SELECT \"Id\" from \"todoLists\" WHERE \"UserId\" = {userid}) ORDER BY \"Id\"").ToListAsync();
 		}
 
+		[SwaggerOperation(Summary = "Returns JSON with all tasks linked to the user of a token and marked with a star")]
 		[Authorize]
 		[HttpGet("/api/getStarredTasks")]
 		public async Task<ActionResult<IEnumerable<TodoItem>>> GetStarredTodoItems()
@@ -35,6 +38,7 @@ namespace FlexTasker.Controllers
 
 		// GET: api/TodoItems/5
 		// <snippet_GetByID>
+		[SwaggerOperation(Summary = "Returns JSON with the task defined by id or 404 if task doesn't exist or isn't linked to the user defined by token")]
 		[Authorize]
 		[HttpGet("/api/getTask/{id}")]
 		public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
@@ -55,6 +59,7 @@ namespace FlexTasker.Controllers
 		// POST: api/TodoItems
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		// <snippet_Create>
+		[SwaggerOperation(Summary = "Creates task defined by body content. Returns JSON with the task if OK. Can return 404 if tasklist not found")]
 		[Authorize]
 		[HttpPost("/api/createTask")]
 		public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
@@ -79,6 +84,7 @@ namespace FlexTasker.Controllers
 		// PUT: api/TodoItems/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		// <snippet_Update>
+		[SwaggerOperation(Summary = "Updates task defined by id and body content. Returns 204 if OK. Can return 404 or 400")]
 		[Authorize]
 		[HttpPut("/api/updateTask/{id}")]
 		public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
@@ -120,6 +126,7 @@ namespace FlexTasker.Controllers
 
 
 		// DELETE: api/TodoItems/5
+		[SwaggerOperation(Summary = "Deletes task defined by id. Returns 204 if OK. Can return 404 if task isn't accessible")]
 		[Authorize]
 		[HttpDelete("/api/deleteTask/{id}")]
 		public async Task<IActionResult> DeleteTodoItem(long id)

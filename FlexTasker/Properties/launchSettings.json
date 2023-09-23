@@ -20,7 +20,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "hotReloadEnabled": true,
-      "applicationUrl": "https://localhost:7019;http://localhost:5165"
+      "applicationUrl": "https://*:7019;http://*:5165"
     }
   }
 }
