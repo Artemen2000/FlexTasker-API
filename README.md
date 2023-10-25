@@ -8,8 +8,6 @@ Key features:
 * Tasklists
 * Marking tasks as important
 
-Swagger link: https://94.19.220.89:7019/swagger/index.html
-
 Used technologies:
 * Microsoft ASP.NET Core
 * Microsoft Entity Framework Core
